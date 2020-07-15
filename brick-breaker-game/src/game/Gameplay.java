@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	
+	// declear variables 
 	private boolean play = false;
 	private int score = 0;
 	private int totalBricks = 21;
@@ -31,14 +32,15 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	
 	private MapGenerator map;
 	
+	// define constructor method
 	public Gameplay()
 	{
-		map = new MapGenerator(3,7);
-		addKeyListener(this);
+		map = new MapGenerator(3,7); // draw map
+		addKeyListener(this); // add keylistener for this class
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		timer = new Timer(delay, this);
-		timer.start();
+		timer = new Timer(delay, this); // create timer
+		timer.start(); // start the timer (and register ActionListener)
 	}
 	
 	public void paint(Graphics g)
@@ -97,16 +99,16 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	}
 	
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		timer.start();
-		if (play) {
-			if (new Rectangle(ballPosX, ballPosY, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))) {
-				ballYDir = - ballYDir;
+	public void actionPerformed(ActionEvent e) { // this method gets called after timer times out
+		timer.start(); // restart the timer
+		if (play) { // if game is ongoing
+			if (new Rectangle(ballPosX, ballPosY, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))) { // find out if ball intersects with the player bar
+				ballYDir = - ballYDir; // if it did then ball starts to move in opposite direction
 			}
 			
 			A : for (int i = 0; i < map.map.length; i++) {
 				for (int j = 0; j < map.map[0].length; j++) {
-					if(map.map[i][j] > 0) {
+					if(map.map[i][j] > 0) { // if brick is not destroyed then draw it
 						int brickX = j * map.brickWidth + 80;
 						int brickY = i * map.brickHeight + 50;
 						int brickWidth = map.brickWidth;
@@ -118,7 +120,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 						
 						if(ballRect.intersects(brickRect)) {
 							map.setBrickValue(0, i, j); // destroy this brick
-							totalBricks--;
+							totalBricks--; 
 							score += 5;
 							
 							// change the direction of the ball when bounces off a brick
@@ -128,7 +130,7 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 								ballYDir = -ballYDir;
 							}
 							
-							break A;
+							break A; // break both loops because ball can touch only one brick at a time
 						}
 					}
 				}
@@ -157,26 +159,28 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		// register legal key events and define what happens when does events happen
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT)
 		{
-			if (playerX >= 600)
+			if (playerX >= 600) // limit the right movement with the player bar
 			{
 				playerX = 600;
-			} else {
+			} else { // just move right with the bar
 				moveRight();
 			}
 		}
-		if(e.getKeyCode() == KeyEvent.VK_LEFT)
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) 
 		{
-			if (playerX < 10)
+			if (playerX < 10) // limit the left movement with the player bar
 			{
 				playerX = 10;
-			} else {
+			} else { // move left with the player bar
 				moveLeft();
 			}
 		}
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) { // if game over and gae has stopped, then enter restarts the game
 			if (!play) {
+				// reset all the variables for the new game
 				play = true;
 				ballPosX = 120;
 				ballPosY = 350;
@@ -187,11 +191,12 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 				totalBricks = 21;
 				map = new MapGenerator(3,7);
 				
-				repaint();
+				repaint(); // repaint must be called to draw the new game
 			}
 		}
 	}
 	
+	// methods for moving the player bar to right and left
 	public void moveRight() {
 		play = true;
 		playerX += 20;
